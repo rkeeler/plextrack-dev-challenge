@@ -1,25 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Layout } from 'antd';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Header } from './header';
+import { HomePage } from './home';
+import { MoviesPage } from './movies';
+import { CharactersPage } from './characters';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Layout>
+        <Layout.Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
+          <Header />
+        </Layout.Header>
+
+        <Layout.Content style={{ marginTop: 64 }}>
+          <Switch>
+            <Route path="/movies">
+              <MoviesPage />
+            </Route>
+            <Route path="/characters">
+              <CharactersPage />
+            </Route>
+            <Route path="">
+              <HomePage />
+            </Route>
+          </Switch>
+        </Layout.Content>
+      </Layout>
+    </Router>
   );
 }
 
