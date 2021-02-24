@@ -1,22 +1,26 @@
+import * as React from 'react';
+import FetchStatus from '../util/FetchStatus';
+
 export default function useMovies() {
-  return [
-    {
-      id: '1',
-      title: 'The Phantom Menace',
-      episode_id: 1,
-      release_date: '2000-01-01',
-      director: 'George Lucas',
-      producer: 'Rick McCallum',
-      characters: [],
-    },
-    {
-      id: '2',
-      title: 'Attack of the Clones',
-      episode_id: 2,
-      release_date: '2002-01-01',
-      director: '',
-      producer: '',
-      characters: [],
-    },
-  ];
+  const [status, setStatus] = React.useState<FetchStatus>(FetchStatus.Init);
+  const [movies, setMovies] = React.useState<Movie[]>([]);
+
+  React.useEffect(() => {
+    async function fetchMovies() {
+      console.log('fetching movies');
+      const response = await fetch('/api/movies');
+      const movies = await response.json();
+      setMovies(movies);
+    }
+
+    if (status === FetchStatus.Init) {
+      setStatus(FetchStatus.Loading);
+      fetchMovies();
+    }
+  }, [status, setStatus, setMovies]);
+
+  return {
+    status,
+    movies,
+  };
 }

@@ -11,7 +11,7 @@ export default function MoviesGrid(props: Props) {
   return (
     <>
       {movies.map((movie) => (
-        <MovieGridItem movie={movie} />
+        <MovieGridItem movie={movie} key={movie.id} />
       ))}
     </>
   );

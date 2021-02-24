@@ -3,6 +3,8 @@ import Inert from '@hapi/inert';
 import Path from 'path';
 import publicStaticContent from './routes/index';
 import health from './routes/api/health';
+import movies from './routes/api/movies';
+import characters from './routes/api/characters';
 
 export async function createServer() {
   const server = Hapi.server({
@@ -19,6 +21,8 @@ export async function createServer() {
     Inert, // needed to serve static content
     publicStaticContent,
     health,
+    movies,
+    characters,
   ]);
 
   await server.initialize();

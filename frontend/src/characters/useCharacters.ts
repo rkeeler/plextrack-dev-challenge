@@ -1,15 +1,26 @@
-export default function useMovies() {
-  return [
-    {
-      id: '1',
-      birth_year: '19 BBY',
-      eye_color: 'Blue',
-      gender: 'Male',
-      hair_color: 'Blond',
-      height: '172',
-      mass: '77',
-      name: 'Luke Skywalker',
-      skin_color: 'Fair',
-    },
-  ];
+import * as React from 'react';
+import FetchStatus from '../util/FetchStatus';
+
+export default function useCharacters() {
+  const [status, setStatus] = React.useState<FetchStatus>(FetchStatus.Init);
+  const [characters, setCharacters] = React.useState<Character[]>([]);
+
+  React.useEffect(() => {
+    async function fetchCharacters() {
+      console.log('fetching characters');
+      const response = await fetch('/api/characters');
+      const characters = await response.json();
+      setCharacters(characters);
+    }
+
+    if (status === FetchStatus.Init) {
+      setStatus(FetchStatus.Loading);
+      fetchCharacters();
+    }
+  }, [status, setStatus, setCharacters]);
+
+  return {
+    status,
+    characters,
+  };
 }

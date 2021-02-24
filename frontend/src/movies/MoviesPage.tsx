@@ -10,7 +10,7 @@ const cardStyle = {
 
 export default function Home() {
   const { path } = useRouteMatch();
-  const movies = useMovies();
+  const { movies } = useMovies();
 
   return (
     <Switch>

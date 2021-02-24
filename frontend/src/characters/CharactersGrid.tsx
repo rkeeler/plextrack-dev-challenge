@@ -11,7 +11,7 @@ export default function CharactersGrid(props: Props) {
   return (
     <>
       {characters.map((character) => (
-        <CharacterGridItem character={character} />
+        <CharacterGridItem character={character} key={character.id} />
       ))}
     </>
   );
