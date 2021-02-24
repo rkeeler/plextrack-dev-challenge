@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { Card } from 'antd';
+import { Card, Spin } from 'antd';
 import { MoviesGrid, useMovies } from '../movies';
 import { CharactersGrid, useCharacters } from '../characters';
 import { Link } from 'react-router-dom';
+import FetchStatus from '../util/FetchStatus';
 
 const cardStyle = {
   marginBottom: 48,
 };
 
 export default function Home() {
-  const { movies } = useMovies();
-  const { characters } = useCharacters();
+  const { status: moviesStatus, movies } = useMovies('popular');
+  const { status: charactersStatus, characters } = useCharacters('popular');
 
   return (
     <div
@@ -21,12 +22,28 @@ export default function Home() {
         padding: 48,
       }}
     >
-      <Card style={cardStyle} title={<Link to="/movies">Movies</Link>}>
-        <MoviesGrid movies={movies} />
+      <Card
+        style={cardStyle}
+        title="Popular Movies"
+        extra={<Link to="/movies">View All</Link>}
+      >
+        {moviesStatus === FetchStatus.Loading ? (
+          <Spin />
+        ) : (
+          <MoviesGrid movies={movies} />
+        )}
       </Card>
 
-      <Card style={cardStyle} title={<Link to="/characters">Characters</Link>}>
-        <CharactersGrid characters={characters} />
+      <Card
+        style={cardStyle}
+        title="Popular Characters"
+        extra={<Link to="/characters">View All</Link>}
+      >
+        {charactersStatus === FetchStatus.Loading ? (
+          <Spin />
+        ) : (
+          <CharactersGrid characters={characters} />
+        )}
       </Card>
     </div>
   );

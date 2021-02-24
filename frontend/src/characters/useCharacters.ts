@@ -1,23 +1,25 @@
 import * as React from 'react';
+import { Character } from '../character';
 import FetchStatus from '../util/FetchStatus';
 
-export default function useCharacters() {
+export default function useCharacters(sortBy: 'popular' | 'chronological') {
   const [status, setStatus] = React.useState<FetchStatus>(FetchStatus.Init);
   const [characters, setCharacters] = React.useState<Character[]>([]);
 
+  // TODO: Cancel fetch when component unmounted
   React.useEffect(() => {
     async function fetchCharacters() {
-      console.log('fetching characters');
-      const response = await fetch('/api/characters');
+      const response = await fetch(`/api/characters?sortBy=${sortBy}`);
       const characters = await response.json();
       setCharacters(characters);
+      setStatus(FetchStatus.Success);
     }
 
     if (status === FetchStatus.Init) {
       setStatus(FetchStatus.Loading);
       fetchCharacters();
     }
-  }, [status, setStatus, setCharacters]);
+  }, [sortBy, status, setStatus, setCharacters]);
 
   return {
     status,

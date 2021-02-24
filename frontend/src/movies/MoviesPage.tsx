@@ -1,24 +1,35 @@
 import * as React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import { Card } from 'antd';
+import { Card, Spin } from 'antd';
 import { MoviesGrid, useMovies } from '../movies';
 import { MovieDetailPage } from '../movie';
+import FetchStatus from '../util/FetchStatus';
 
 const cardStyle = {
   marginBottom: 48,
 };
 
-export default function Home() {
+export default function MoviesPage() {
   const { path } = useRouteMatch();
-  const { movies } = useMovies();
+  const { status: popularStatus, movies: popularMovies } = useMovies('popular');
+  const {
+    status: chronologicalStatus,
+    movies: chronologicalMovies,
+  } = useMovies('chronological');
 
   return (
     <Switch>
       <Route path={`${path}/:id`}>
         {({ match }) => {
-          const movie = movies.find((movie) => movie.id === match?.params.id);
-          if (!movie) return null;
-          return <MovieDetailPage movie={movie} />;
+          const movie = chronologicalMovies.find(
+            (movie) => movie.id === match?.params.id
+          );
+          return (
+            <MovieDetailPage
+              movie={movie}
+              loading={chronologicalStatus === FetchStatus.Loading}
+            />
+          );
         }}
       </Route>
 
@@ -32,10 +43,19 @@ export default function Home() {
           }}
         >
           <Card style={cardStyle} title="Popular">
-            <MoviesGrid movies={movies} />
+            {popularStatus === FetchStatus.Loading ? (
+              <Spin />
+            ) : (
+              <MoviesGrid movies={popularMovies} />
+            )}
           </Card>
+
           <Card style={cardStyle} title="Chronological">
-            <MoviesGrid movies={movies} />
+            {chronologicalStatus === FetchStatus.Loading ? (
+              <Spin />
+            ) : (
+              <MoviesGrid movies={chronologicalMovies} />
+            )}
           </Card>
         </div>
       </Route>

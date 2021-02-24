@@ -1,4 +1,4 @@
-interface Movie {
+export default interface Movie {
   id: string;
   title: string;
   episode_id: number;

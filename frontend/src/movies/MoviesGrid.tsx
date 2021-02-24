@@ -1,5 +1,5 @@
 import * as React from 'react';
-import MovieGridItem from '../movie/MovieGridItem';
+import { Movie, MovieGridItem } from '../movie';
 
 interface Props {
   movies: Movie[];

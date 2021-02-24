@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from 'antd';
 import getRomanNumeral from '../util/getRomanNumeral';
+import Movie from './Movie';
 
 interface Props {
   movie: Movie;

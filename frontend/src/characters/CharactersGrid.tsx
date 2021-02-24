@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CharacterGridItem from '../character/CharacterGridItem';
+import { Character, CharacterGridItem } from '../character';
 
 interface Props {
   characters: Character[];
