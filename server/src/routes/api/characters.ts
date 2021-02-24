@@ -1,7 +1,6 @@
 import Hapi from '@hapi/hapi';
 import fetch from 'node-fetch';
 import sortBy from 'lodash/sortBy';
-import take from 'lodash/take';
 import Character from '../../types/Character';
 
 const plugin = {
@@ -11,47 +10,87 @@ const plugin = {
       method: 'GET',
       path: '/api/characters',
 
-      handler: async (request) => {
-        let characters: Character[] = [];
-        let nextUrl = 'https://swapi.dev/api/people';
-
-        while (nextUrl != null) {
-          const reponse = await fetch(nextUrl);
-          const { results, next } = await reponse.json();
-
-          characters = [
-            ...characters,
-            ...results.map((character: any) => {
-              return {
-                id: character.url
-                  .replace('http://swapi.dev/api/people/', '')
-                  .replace('/', ''),
-                name: character.name,
-                birth_year: character.birth_year,
-                gender: character.gender,
-                height: character.height,
-                mass: character.mass,
-                eye_color: character.eye_color,
-                hair_color: character.hair_color,
-                skin_color: character.skin_color,
-              } as Character;
-            }),
-          ];
-
-          nextUrl = next;
-        }
-
+      handler: async (request, h) => {
         if (request.query.sortBy === 'popular') {
-          return take(characters, 5);
+          // @ts-ignore
+          const popularPages = await h.pageVisitsRepository.getPageVisitCounts(
+            'character'
+          );
+
+          let popularCharacters: Character[] = [];
+
+          // could parallelize with Promise.all to speed up this request
+          for await (let popularPage of popularPages) {
+            const character = await getCharacter(popularPage.resourceid);
+            popularCharacters.push(character);
+          }
+
+          return popularCharacters;
         } else {
-          // alphabetical
+          const characters = await getAllCharacters();
           return sortBy(characters, (character) =>
             character.name.toLowerCase()
           );
         }
       },
     });
+
+    server.route({
+      method: 'GET',
+      path: '/api/characters/{id}',
+
+      handler: async (request, h) => {
+        const { id } = request.params;
+        const character = await getCharacter(id);
+
+        // @ts-ignore
+        await h.pageVisitsRepository.putPageVisit('character', id);
+
+        return character;
+      },
+    });
   },
 };
 
 export default plugin;
+
+async function getCharacter(id: string): Promise<Character> {
+  const reponse = await fetch(`https://swapi.dev/api/people/${id}`);
+  const json = await reponse.json();
+  return parseCharacter(json);
+}
+
+async function getAllCharacters(): Promise<Character[]> {
+  let characters: Character[] = [];
+  let nextUrl = 'https://swapi.dev/api/people';
+
+  while (nextUrl != null) {
+    const reponse = await fetch(nextUrl);
+    const { results, next } = await reponse.json();
+
+    characters = [
+      ...characters,
+      ...results.map((character: any) => parseCharacter(character)),
+    ];
+
+    nextUrl = next;
+  }
+
+  return characters;
+}
+
+function parseCharacter(rawCharacter: any): Character {
+  return {
+    id: rawCharacter.url
+      .replace('http://swapi.dev/api/people/', '')
+      .replace('/', ''),
+    name: rawCharacter.name,
+    birth_year: rawCharacter.birth_year,
+    gender: rawCharacter.gender,
+    height: rawCharacter.height,
+    mass: rawCharacter.mass,
+    eye_color: rawCharacter.eye_color,
+    hair_color: rawCharacter.hair_color,
+    skin_color: rawCharacter.skin_color,
+  };
+}

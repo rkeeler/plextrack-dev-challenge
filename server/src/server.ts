@@ -1,6 +1,7 @@
 import Hapi from '@hapi/hapi';
 import Inert from '@hapi/inert';
 import Path from 'path';
+import pageVisitsRepository from './repositories/page-visits';
 import publicStaticContent from './routes/index';
 import health from './routes/api/health';
 import movies from './routes/api/movies';
@@ -18,6 +19,7 @@ export async function createServer() {
   });
 
   await server.register([
+    pageVisitsRepository,
     Inert, // needed to serve static content
     publicStaticContent,
     health,

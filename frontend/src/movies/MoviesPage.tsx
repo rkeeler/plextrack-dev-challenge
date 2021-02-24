@@ -11,6 +11,21 @@ const cardStyle = {
 
 export default function MoviesPage() {
   const { path } = useRouteMatch();
+
+  return (
+    <Switch>
+      <Route path={`${path}/:id`}>
+        {({ match }) => <MovieDetailPage id={match?.params.id} />}
+      </Route>
+
+      <Route exact path={path}>
+        <MoviesList />
+      </Route>
+    </Switch>
+  );
+}
+
+function MoviesList() {
   const { status: popularStatus, movies: popularMovies } = useMovies('popular');
   const {
     status: chronologicalStatus,
@@ -18,47 +33,29 @@ export default function MoviesPage() {
   } = useMovies('chronological');
 
   return (
-    <Switch>
-      <Route path={`${path}/:id`}>
-        {({ match }) => {
-          const movie = chronologicalMovies.find(
-            (movie) => movie.id === match?.params.id
-          );
-          return (
-            <MovieDetailPage
-              movie={movie}
-              loading={chronologicalStatus === FetchStatus.Loading}
-            />
-          );
-        }}
-      </Route>
+    <div
+      style={{
+        flex: '1 1 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 48,
+      }}
+    >
+      <Card style={cardStyle} title="Popular">
+        {popularStatus === FetchStatus.Loading ? (
+          <Spin />
+        ) : (
+          <MoviesGrid movies={popularMovies} />
+        )}
+      </Card>
 
-      <Route exact path={path}>
-        <div
-          style={{
-            flex: '1 1 auto',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: 48,
-          }}
-        >
-          <Card style={cardStyle} title="Popular">
-            {popularStatus === FetchStatus.Loading ? (
-              <Spin />
-            ) : (
-              <MoviesGrid movies={popularMovies} />
-            )}
-          </Card>
-
-          <Card style={cardStyle} title="Chronological">
-            {chronologicalStatus === FetchStatus.Loading ? (
-              <Spin />
-            ) : (
-              <MoviesGrid movies={chronologicalMovies} />
-            )}
-          </Card>
-        </div>
-      </Route>
-    </Switch>
+      <Card style={cardStyle} title="Chronological">
+        {chronologicalStatus === FetchStatus.Loading ? (
+          <Spin />
+        ) : (
+          <MoviesGrid movies={chronologicalMovies} />
+        )}
+      </Card>
+    </div>
   );
 }

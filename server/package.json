@@ -10,8 +10,10 @@
   "dependencies": {
     "@hapi/hapi": "^20.1.0",
     "@hapi/inert": "^6.0.3",
+    "@types/pg": "^7.14.10",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "pg": "^8.5.1"
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.5",

@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Descriptions, PageHeader, Spin } from 'antd';
-import Character from './Character';
+import useCharacter from './useCharacter';
+import FetchStatus from '../util/FetchStatus';
 
 interface Props {
-  character?: Character;
-  loading: boolean;
+  id: string;
 }
 
 const margin = 48;
 
 export default function CharacterDetailPage(props: Props) {
-  const { character, loading } = props;
+  const { status, character } = useCharacter(props.id);
 
-  if (loading) {
+  if (status === FetchStatus.Loading) {
     return <Spin style={{ margin }} />;
   } else if (!character) {
     return <div style={{ margin }}>Movie not found</div>;

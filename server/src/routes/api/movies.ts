@@ -1,7 +1,6 @@
 import Hapi from '@hapi/hapi';
 import fetch from 'node-fetch';
 import sortBy from 'lodash/sortBy';
-import take from 'lodash/take';
 import Movie from '../../types/Movie';
 
 const plugin = {
@@ -11,33 +10,69 @@ const plugin = {
       method: 'GET',
       path: '/api/movies',
 
-      handler: async (request) => {
-        const reponse = await fetch('https://swapi.dev/api/films');
-        const { results } = await reponse.json();
-
-        const movies = results.map((movie: any) => {
-          return {
-            id: movie.url
-              .replace('http://swapi.dev/api/films/', '')
-              .replace('/', ''),
-            title: movie.title,
-            episode_id: movie.episode_id,
-            release_date: movie.release_date,
-            director: movie.director,
-            producer: movie.producer,
-            characters: [],
-          } as Movie;
-        });
-
+      handler: async (request, h) => {
         if (request.query.sortBy === 'popular') {
-          return take(movies, 3);
+          // @ts-ignore
+          const popularPages = await h.pageVisitsRepository.getPageVisitCounts(
+            'movie'
+          );
+
+          let popularMovies: Movie[] = [];
+
+          for await (let popularPage of popularPages) {
+            const movie = await getMovie(popularPage.resourceid);
+            popularMovies.push(movie);
+          }
+
+          return popularMovies;
         } else {
-          // chronological
+          const movies = await getAllMovies();
           return sortBy(movies, (movie) => movie.episode_id);
         }
+      },
+    });
+
+    server.route({
+      method: 'GET',
+      path: '/api/movies/{id}',
+
+      handler: async (request, h) => {
+        const { id } = request.params;
+        const movie = await getMovie(id);
+
+        // @ts-ignore
+        await h.pageVisitsRepository.putPageVisit('movie', id);
+
+        return movie;
       },
     });
   },
 };
 
 export default plugin;
+
+async function getMovie(id: string): Promise<Movie> {
+  const reponse = await fetch(`https://swapi.dev/api/films/${id}`);
+  const json = await reponse.json();
+  return parseMovie(json);
+}
+
+async function getAllMovies(): Promise<Movie[]> {
+  const reponse = await fetch('https://swapi.dev/api/films');
+  const { results } = await reponse.json();
+  return results.map((movie: any) => parseMovie(movie));
+}
+
+function parseMovie(rawMovie: any): Movie {
+  return {
+    id: rawMovie.url
+      .replace('http://swapi.dev/api/films/', '')
+      .replace('/', ''),
+    title: rawMovie.title,
+    episode_id: rawMovie.episode_id,
+    release_date: rawMovie.release_date,
+    director: rawMovie.director,
+    producer: rawMovie.producer,
+    characters: [],
+  };
+}

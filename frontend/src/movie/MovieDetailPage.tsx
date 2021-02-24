@@ -2,19 +2,19 @@ import * as React from 'react';
 import { Descriptions, PageHeader, Spin } from 'antd';
 import { format, parseISO } from 'date-fns';
 import getRomanNumeral from '../util/getRomanNumeral';
-import Movie from './Movie';
+import FetchStatus from '../util/FetchStatus';
+import useMovie from './useMovie';
 
 interface Props {
-  movie?: Movie;
-  loading: boolean;
+  id: string;
 }
 
 const margin = 48;
 
 export default function MovieDetailPage(props: Props) {
-  const { loading, movie } = props;
+  const { status, movie } = useMovie(props.id);
 
-  if (loading) {
+  if (status === FetchStatus.Loading) {
     return <Spin style={{ margin }} />;
   } else if (!movie) {
     return <div style={{ margin }}>Movie not found</div>;
