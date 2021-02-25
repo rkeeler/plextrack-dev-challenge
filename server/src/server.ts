@@ -10,7 +10,6 @@ import characters from './routes/api/characters';
 export async function createServer() {
   const server = Hapi.server({
     port: process.env.PORT || 4000,
-    host: process.env.HOST || 'localhost',
     routes: {
       files: {
         relativeTo: Path.join(__dirname, '../public'),
