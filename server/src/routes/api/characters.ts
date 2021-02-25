@@ -11,6 +11,7 @@ const plugin = {
       path: '/api/characters',
 
       handler: async (request, h) => {
+        // throw;
         if (request.query.sortBy === 'popular') {
           // @ts-ignore
           const popularPages = await h.pageVisitsRepository.getPageVisitCounts(
@@ -27,7 +28,7 @@ const plugin = {
 
           return popularCharacters;
         } else {
-          const characters = await getAllCharacters();
+          const characters = await getCharacters(request.query.search);
           return sortBy(characters, (character) =>
             character.name.toLowerCase()
           );
@@ -60,9 +61,14 @@ async function getCharacter(id: string): Promise<Character> {
   return parseCharacter(json);
 }
 
-async function getAllCharacters(): Promise<Character[]> {
+async function getCharacters(search?: string): Promise<Character[]> {
   let characters: Character[] = [];
+
   let nextUrl = 'https://swapi.dev/api/people';
+
+  if (search != null) {
+    nextUrl += `?search=${search}`;
+  }
 
   while (nextUrl != null) {
     const reponse = await fetch(nextUrl);

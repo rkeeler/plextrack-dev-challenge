@@ -11,6 +11,7 @@ const plugin = {
       path: '/api/movies',
 
       handler: async (request, h) => {
+        // throw;
         if (request.query.sortBy === 'popular') {
           // @ts-ignore
           const popularPages = await h.pageVisitsRepository.getPageVisitCounts(
@@ -26,7 +27,7 @@ const plugin = {
 
           return popularMovies;
         } else {
-          const movies = await getAllMovies();
+          const movies = await getMovies(request.query.search);
           return sortBy(movies, (movie) => movie.episode_id);
         }
       },
@@ -57,8 +58,14 @@ async function getMovie(id: string): Promise<Movie> {
   return parseMovie(json);
 }
 
-async function getAllMovies(): Promise<Movie[]> {
-  const reponse = await fetch('https://swapi.dev/api/films');
+async function getMovies(search?: string): Promise<Movie[]> {
+  let url = `https://swapi.dev/api/films`;
+
+  if (search != null) {
+    url += `?search=${search}`;
+  }
+
+  const reponse = await fetch(url);
   const { results } = await reponse.json();
   return results.map((movie: any) => parseMovie(movie));
 }

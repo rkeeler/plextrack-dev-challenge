@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Menu } from 'antd';
 import { useLocation, Link } from 'react-router-dom';
+import Search from './Search';
 
 export default function Header() {
   const location = useLocation();
@@ -39,6 +40,10 @@ export default function Header() {
           <Link to="/characters">Characters</Link>
         </Menu.Item>
       </Menu>
+
+      <div style={{ flex: '1 1 auto' }} />
+
+      <Search />
     </div>
   );
 }

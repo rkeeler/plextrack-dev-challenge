@@ -17,11 +17,10 @@ export default function useCharacter(id: string) {
       setStatus(FetchStatus.Success);
     }
 
-    if (status === FetchStatus.Init) {
-      setStatus(FetchStatus.Loading);
-      fetchCharacter();
-    }
-  }, [id, status, setStatus, setCharacter]);
+    setStatus(FetchStatus.Loading);
+    fetchCharacter();
+    //eslint-disable-next-line
+  }, [id]);
 
   return {
     status,

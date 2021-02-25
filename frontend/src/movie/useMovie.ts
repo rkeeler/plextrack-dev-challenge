@@ -17,11 +17,10 @@ export default function useMovie(id: string) {
       setStatus(FetchStatus.Success);
     }
 
-    if (status === FetchStatus.Init) {
-      setStatus(FetchStatus.Loading);
-      fetchMovie();
-    }
-  }, [id, status, setStatus, setMovie]);
+    setStatus(FetchStatus.Loading);
+    fetchMovie();
+    //eslint-disable-next-line
+  }, [id]);
 
   return {
     status,
