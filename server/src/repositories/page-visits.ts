@@ -9,7 +9,7 @@ const plugin = {
       host: process.env.POSTGRES_HOST || 'localhost',
       database: 'plextracdevchallenge',
       user: process.env.POSTGRES_USER || 'postgres',
-      password: process.env.POSTGRES_USER || 'potato',
+      password: process.env.POSTGRES_PASSWORD || 'potato',
     });
 
     await client.connect();

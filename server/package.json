@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ts-node-dev src/start.ts",
     "test": "TEST=true jest",
-    "test:watch": "TEST=true jest --watch"
+    "test:watch": "TEST=true jest --watch",
+    "build": "tsc && cp -R node_modules build/node_modules"
   },
   "dependencies": {
     "@hapi/hapi": "^20.1.0",

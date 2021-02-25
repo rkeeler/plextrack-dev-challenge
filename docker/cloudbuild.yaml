@@ -1,0 +1,23 @@
+images: ["us.gcr.io/plextrac-dev-challenge/server:$BRANCH_NAME-$COMMIT_SHA"]
+
+steps:
+  - name: node:15
+    entrypoint: "bash"
+    args: ["docker/scripts/restore.sh"]
+  - name: node:15
+    entrypoint: "bash"
+    args: ["docker/scripts/build.sh"]
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "build",
+        "-t",
+        "us.gcr.io/plextrac-dev-challenge/server:$BRANCH_NAME-$COMMIT_SHA",
+        "web/build",
+      ]
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "us.gcr.io/plextrac-dev-challenge/server:$BRANCH_NAME-$COMMIT_SHA",
+      ]
