@@ -13,7 +13,7 @@ steps:
         "build",
         "-t",
         "us.gcr.io/plextrac-dev-challenge/server:$BRANCH_NAME-$COMMIT_SHA",
-        "web/build",
+        "docker/build",
       ]
   - name: gcr.io/cloud-builders/docker
     args:
