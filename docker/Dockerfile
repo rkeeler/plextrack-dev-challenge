@@ -7,4 +7,4 @@ WORKDIR /usr/src/app
 
 EXPOSE 80
 
-ENTRYPOINT ["node", "start.js"]
+ENTRYPOINT ["node", "src/start.js"]
