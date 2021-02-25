@@ -10,8 +10,6 @@ This project was created by Reagan Keeler as part of the application process for
 - Include a CI/CD infrastructure
 - The application should be deployed and hosted on one of the major cloud platforms
 
----
-
 ## Libraries and Software Used
 
 ### Frontend
@@ -39,13 +37,9 @@ This project was created by Reagan Keeler as part of the application process for
 - Google Cloud Build / Container Registry
 - Google Compute Engine
 
----
-
 ## Automated Testing
 
 Tests can be run from the `/frontend` and `/server` folders using the `yarn test` command. Since this is a sample project with a recommended time constraint, only a handful of tests were written to demonstrate the capability.
-
----
 
 ## Server Environment Variables
 
